@@ -15,7 +15,7 @@ def deleteMatches():
     """Remove all the match records from the database."""
     db = connect()
     c = db.cursor()
-    c.execute("delete from matches")
+    c.execute("DELETE FROM matches")
     db.commit()
     db.close()
 
@@ -24,7 +24,7 @@ def deletePlayers():
     """Remove all the player records from the database."""
     db = connect()
     c = db.cursor()
-    c.execute("delete from players")
+    c.execute("DELETE FROM players")
     db.commit()
     db.close()
 
@@ -33,7 +33,7 @@ def countPlayers():
     """Returns the number of players currently registered."""
     db = connect()
     c = db.cursor()
-    c.execute("select count(*) from players")
+    c.execute("SELECT COUNT(*) FROM players")
     result = c.fetchone()
     return result[0]
     db.close()
@@ -50,7 +50,7 @@ def registerPlayer(name):
     """
     db = connect()
     c = db.cursor()
-    c.execute("insert into players (name) values (%s)", (name,))
+    c.execute("INSERT INTO players (name) VALUES (%s)", (name,))
     db.commit()
     db.close()
 
@@ -70,7 +70,7 @@ def playerStandings():
     """
     db = connect()
     c = db.cursor()
-    c.execute("select * from standings")
+    c.execute("SELECT * FROM standings")
     return c.fetchall()
     db.close()
 
@@ -84,7 +84,7 @@ def reportMatch(winner, loser):
     """
     db = connect()
     c = db.cursor()
-    c.execute("insert into matches (winner, loser) values (%s, %s)", 
+    c.execute("INSERT INTO matches (winner, loser) VALUES (%s, %s)", 
         (winner, loser,))
     db.commit()
     db.close()
@@ -105,5 +105,13 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-
-
+    pairings = []
+    db = connect()
+    c = db.cursor()
+    c.execute("SELECT * FROM standings")
+    rows = c.fetchall()
+    even_rows = [x for x in range(len(rows)) if x%2 == 0]
+    for i in even_rows:
+        pairings.append((rows[i][0], rows[i][1], rows[i+1][0], rows[i+1][1]))
+    return pairings
+    db.close()
