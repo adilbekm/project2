@@ -13,12 +13,15 @@ create table players (
     name varchar(50)   -- the player's full name
     );
 
-create table standings (
-    id integer references players (id), 
-    name varchar(50),  -- the player's full name
-    wins smallint,     -- the number of matched the player has won
-    matches smallint   -- the number of matches the player has played
-    );
+create view standings as
+    select distinct players.id, players.name, count(wins.winner) as wins,
+    (count(wins.winner) + count(losses.loser)) as matches 
+    from players 
+    left join matches as wins on players.id = wins.winner
+    left join matches as losses on players.id = losses.loser 
+    group by players.id
+    order by wins desc;
+
 
 create table matches (
     id serial primary key,  
