@@ -35,8 +35,8 @@ def countPlayers():
     c = db.cursor()
     c.execute("SELECT COUNT(*) FROM players")
     result = c.fetchone()
-    return result[0]
     db.close()
+    return result[0]
 
 
 def registerPlayer(name):
@@ -71,8 +71,9 @@ def playerStandings():
     db = connect()
     c = db.cursor()
     c.execute("SELECT * FROM standings")
-    return c.fetchall()
+    result = c.fetchall()
     db.close()
+    return result
 
 
 def reportMatch(winner, loser):
@@ -106,12 +107,8 @@ def swissPairings():
         name2: the second player's name
     """
     pairings = []
-    db = connect()
-    c = db.cursor()
-    c.execute("SELECT * FROM standings")
-    rows = c.fetchall()
+    rows = playerStandings()
     even_rows = [x for x in range(len(rows)) if x%2 == 0]
     for i in even_rows:
         pairings.append((rows[i][0], rows[i][1], rows[i+1][0], rows[i+1][1]))
     return pairings
-    db.close()
